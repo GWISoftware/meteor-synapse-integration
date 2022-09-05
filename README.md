@@ -1,8 +1,9 @@
-# Meteor Addon Template
+# Coming Soon
 
-A template to allow easy usage of the Meteor Addon API.
+### Planned:  
+- Default lighting effects on various world/player events (with settings)
+- Customizable(ish) effects for other custom events
+- Whatever else when im not bored
 
-### How to use:  
-- Clone this project
-- Use this template to create new modules/commands
-- Run the mod with Meteor.
+## Not Planned:
+- Non-Windows OS support (cope?)
