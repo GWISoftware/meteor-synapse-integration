@@ -20,6 +20,8 @@ public class Addon extends MeteorAddon {
     public static final Category CATEGORY = new Category("Example");
     public static final HudGroup HUD_GROUP = new HudGroup("Example");
 
+    public static final RGBInterface RGB_INTERFACE = new RGBInterface();
+
     @Override
     public void onInitialize() {
         LOG.info("Starting MeteorRGB...");
@@ -33,20 +35,6 @@ public class Addon extends MeteorAddon {
         // HUD
         Hud.get().register(HudExample.INFO);
 
-
-        RGBInterface interf = new RGBInterface();
-        new Thread(() -> {
-            while (!interf.isOk()) {
-                try {
-                    Thread.sleep(500);
-                } catch (Exception ignored) {}
-            }
-            ArrayList<String> commands = new ArrayList<>();
-            commands.add("blink green 1");
-            commands.add("blink white 1");
-            commands.add("solid green");
-            interf.sendMacro(commands);
-        }).start();
 
     }
 
