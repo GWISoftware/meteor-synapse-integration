@@ -4,6 +4,7 @@ import meteor.rgb.commands.CommandExample;
 import meteor.rgb.hud.HudExample;
 import meteor.rgb.modules.ModuleExample;
 import com.mojang.logging.LogUtils;
+import meteor.rgb.modules.RGBSync;
 import meteor.rgb.util.RGBInterface;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
 import meteordevelopment.meteorclient.systems.commands.Commands;
@@ -26,15 +27,7 @@ public class Addon extends MeteorAddon {
     public void onInitialize() {
         LOG.info("Starting MeteorRGB...");
 
-        // Modules
-        Modules.get().add(new ModuleExample());
-
-        // Commands
-        Commands.get().add(new CommandExample());
-
-        // HUD
-        Hud.get().register(HudExample.INFO);
-
+        Modules.get().add(new RGBSync());
 
     }
 

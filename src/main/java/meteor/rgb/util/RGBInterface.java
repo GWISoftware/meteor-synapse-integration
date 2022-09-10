@@ -121,9 +121,9 @@ public class RGBInterface {
         ArrayList<String> macro = new ArrayList<>();
         macro.add("solid blank");
         macro.add("delay 500");
-        macro.add("scroll custom F519B3 custom 913DE2 2 top_to_bottom");
+        macro.add("scroll custom F519B3 custom 913DE2 2 top_to_bottom delay 35");
         macro.add("delay 150");
-        macro.add("solid custom FEE9FF");
+        macro.add("restore");
         this.sendMacro(macro);
     }
 
