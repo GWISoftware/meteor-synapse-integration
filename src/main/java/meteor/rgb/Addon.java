@@ -1,11 +1,12 @@
 package meteor.rgb;
 
+import me.ghost.rgbhelper.iterf.RGBInterface;
+import me.ghost.rgbhelper.util.Utils;
 import meteor.rgb.commands.CommandExample;
 import meteor.rgb.hud.HudExample;
 import meteor.rgb.modules.ModuleExample;
 import com.mojang.logging.LogUtils;
 import meteor.rgb.modules.RGBSync;
-import meteor.rgb.util.RGBInterface;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
 import meteordevelopment.meteorclient.systems.commands.Commands;
 import meteordevelopment.meteorclient.systems.hud.Hud;
@@ -15,17 +16,35 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Addon extends MeteorAddon {
     public static final Logger LOG = LogUtils.getLogger();
     public static final Category CATEGORY = new Category("Example");
     public static final HudGroup HUD_GROUP = new HudGroup("Example");
 
-    public static final RGBInterface RGB_INTERFACE = new RGBInterface();
+    public static RGBInterface RGB_INTERFACE = null;
+    public static ExecutorService RGB_THREAD = Executors.newCachedThreadPool();
 
     @Override
     public void onInitialize() {
         LOG.info("Starting MeteorRGB...");
+
+        RGB_THREAD.execute(() -> {
+            if (!Utils.checkHelpers()) {
+                log("Couldn't start the rgb interface. One or more helper files are missing,\nand/or couldn't be downloaded");
+                return;
+            }
+
+            RGB_INTERFACE = new RGBInterface();
+            while (!RGB_INTERFACE.isOk()) {
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception ignored) {}
+            }
+        });
+
 
         Modules.get().add(new RGBSync());
 

@@ -5,9 +5,13 @@ import meteor.rgb.util.Maths;
 import meteordevelopment.meteorclient.events.entity.DamageEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
+import meteordevelopment.meteorclient.systems.Systems;
+import meteordevelopment.meteorclient.systems.hud.Hud;
+import meteordevelopment.meteorclient.systems.hud.HudElement;
 import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
+import net.minecraft.entity.projectile.ArrowEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +46,11 @@ public class RGBSync extends Module {
 
     @Override
     public void onActivate() {
+        if (Addon.RGB_INTERFACE == null) {
+            error("RGB Interface is not connected.");
+            this.toggle();
+            return;
+        }
         lastDamage = Maths.now();
         lastHealth = Maths.now();
         lastEat = Maths.now();

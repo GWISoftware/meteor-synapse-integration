@@ -28,6 +28,15 @@ dependencies {
     // Meteor
     //modImplementation "meteordevelopment:meteor-client:${project.meteor_version}"
     modImplementation files('lib/meteor.jar')
+    implementation files('lib/java-rgb-helper.jar')
+}
+
+jar { // copy rgb helper to addon
+    from provider {
+        zipTree(configurations.compileClasspath.filter {
+            it.name.contains('java-rgb-helper.jar')
+        }.singleFile)
+    }
 }
 
 processResources {
