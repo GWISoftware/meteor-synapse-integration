@@ -10,9 +10,12 @@ import meteordevelopment.meteorclient.systems.hud.Hud;
 import meteordevelopment.meteorclient.systems.hud.HudElement;
 import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.render.color.RainbowColors;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.world.biome.Biome;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +25,7 @@ public class RGBSync extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
 
-
+    private final Setting<Boolean> syncWithMeteor = sgGeneral.add(new BoolSetting.Builder().name("sync-with-meteor").description("syncs your rgb to meteor's rgb.").defaultValue(true).build());
     private final Setting<Boolean> topBarHealth = sgGeneral.add(new BoolSetting.Builder().name("topbar-health").description("Shows your health across the top of the keyboard.").defaultValue(true).build());
     private final Setting<Integer> topBarHealthDelay = sgGeneral.add(new IntSetting.Builder().name("topbar-health-delay").description("The delay in ms between updating topbar health.").defaultValue(500).min(100).sliderMax(1000).visible(topBarHealth::get).build());
     private final Setting<Boolean> onDamage = sgGeneral.add(new BoolSetting.Builder().name("onDamage").description("run a lighting command on damage.").defaultValue(true).build());
@@ -44,6 +47,8 @@ public class RGBSync extends Module {
     private long lastHealth;
     private long lastEat;
 
+    //private long lastSync;
+
     @Override
     public void onActivate() {
         if (Addon.RGB_INTERFACE == null) {
@@ -51,16 +56,29 @@ public class RGBSync extends Module {
             this.toggle();
             return;
         }
+        if (syncWithMeteor.get()) {
+            topBarHealth.set(false);
+            onDamage.set(false);
+            onEat.set(false);
+        }
+
         lastDamage = Maths.now();
         lastHealth = Maths.now();
         lastEat = Maths.now();
+        //lastSync = Maths.now();
     }
 
 
     @EventHandler
     public void onTick(TickEvent.Post event) {
-        if (topBarHealth.get() && Maths.msPassed(lastHealth) >= topBarHealthDelay.get()) setTopBarHealth();
-        if (onEat.get() && isEating() && Maths.msPassed(lastEat) >= eatDelay.get()) runEating();
+        if (syncWithMeteor.get()/* && Maths.msPassed(lastSync) >= 1000*/) {
+            String hex = Maths.colorToHex(new Color(RainbowColors.GLOBAL.r, RainbowColors.GLOBAL.g, RainbowColors.GLOBAL.b, RainbowColors.GLOBAL.a));
+            Addon.RGB_INTERFACE.sendCmd("global solid custom " + hex.replace("#", ""));
+        }
+
+
+        if (topBarHealth.get() && Maths.msPassed(lastHealth) >= topBarHealthDelay.get()) setTopBarHealth(); // top bar health
+        if (onEat.get() && isEating() && Maths.msPassed(lastEat) >= eatDelay.get()) runEating(); // eating animation
     }
 
 
@@ -68,6 +86,7 @@ public class RGBSync extends Module {
     public void onDamage(DamageEvent de) {
         if (de.entity != mc.player || Maths.msPassed(lastDamage) <= damageDelay.get()) return;
         Addon.RGB_INTERFACE.sendMacro((ArrayList<String>) damageMacro.get());
+        //todo detect damage 'side' and use the blink effect
     }
 
 
@@ -87,7 +106,8 @@ public class RGBSync extends Module {
         else if (healthPercentage <= 0.666) healthColor = "yellow";
         else healthColor = "green";
 
-        Addon.RGB_INTERFACE.sendMacro(new ArrayList<>(List.of("topbar " + healthColor)));
+        //Addon.RGB_INTERFACE.sendMacro(new ArrayList<>(List.of("topbar " + healthColor)));
+        Addon.RGB_INTERFACE.sendCmd("keyboard topbar " + healthColor);
         lastHealth = Maths.now();
     }
 

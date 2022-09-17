@@ -1,5 +1,6 @@
 package meteor.rgb.util;
 
+import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
 public class Maths {
@@ -22,5 +23,9 @@ public class Maths {
 
     public static long secondsToMS(int seconds) {return TimeUnit.SECONDS.toMillis(seconds);}
 
+
+    public static String colorToHex(Color color) {
+        return String.format("#%02X%02X%02X", color.getRed(), color.getBlue(), color.getGreen());
+    }
 
 }

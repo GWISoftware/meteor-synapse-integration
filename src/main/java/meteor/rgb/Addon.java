@@ -1,7 +1,6 @@
 package meteor.rgb;
 
 import me.ghost.rgbhelper.iterf.RGBInterface;
-import me.ghost.rgbhelper.util.Utils;
 import meteor.rgb.commands.CommandExample;
 import meteor.rgb.hud.HudExample;
 import meteor.rgb.modules.ModuleExample;
@@ -13,6 +12,7 @@ import meteordevelopment.meteorclient.systems.hud.Hud;
 import meteordevelopment.meteorclient.systems.hud.HudGroup;
 import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Modules;
+import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
@@ -32,12 +32,7 @@ public class Addon extends MeteorAddon {
         LOG.info("Starting MeteorRGB...");
 
         RGB_THREAD.execute(() -> {
-            if (!Utils.checkHelpers()) {
-                log("Couldn't start the rgb interface. One or more helper files are missing,\nand/or couldn't be downloaded");
-                return;
-            }
-
-            RGB_INTERFACE = new RGBInterface();
+            RGB_INTERFACE = new RGBInterface(FabricLoader.getInstance().getGameDir().toFile());
             while (!RGB_INTERFACE.isOk()) {
                 try {
                     Thread.sleep(1000);
